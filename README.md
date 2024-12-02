@@ -44,7 +44,7 @@ Une API RESTful permettant de gérer les réservations de terrains de badminton 
    ```
 
 4. **Tester les endpoints :**
-   Utilisez un outil comme [Postman](https://www.postman.com/) ou `cURL` pour interagir avec l'API.
+   Utilisez un outil comme `cURL` pour interagir avec l'API.
 
 ---
 
