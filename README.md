@@ -11,8 +11,12 @@ Une API RESTful permettant de gérer les réservations de terrains de badminton 
    - [Dictionnaire des données](#dictionnaire-des-données)
    - [Tableau récapitulatif des ressources](#tableau-récapitulatif-des-ressources)
 3. [Sécurité](#sécurité)
-4. [Remarques](#remarques)
-5. [Références](#références)
+4. [Tester l’API](#tester-lapi)
+   - [Authentification](#authentification)
+   - [Terrains](#terrains)
+   - [Réservations](#réservations)
+5. [Remarques](#remarques)
+6. [Références](#références)
 
 ---
 
@@ -44,7 +48,7 @@ Une API RESTful permettant de gérer les réservations de terrains de badminton 
    ```
 
 4. **Tester les endpoints :**
-   Utilisez un outil comme `cURL` pour interagir avec l'API.
+   Utilisez les commandes `cURL` décrites dans la section [Tester l'API](#tester-lapi).
 
 ---
 
@@ -96,6 +100,74 @@ Une API RESTful permettant de gérer les réservations de terrains de badminton 
 ### **Améliorations possibles (bonus)**
 - Mise en place de la protection contre les attaques par brute force (rate-limiting).
 - Utilisation de HTTPS et de `helmet` pour sécuriser les headers.
+
+---
+
+## **Tester l’API**
+
+### **1. Authentification**
+Obtenez un token JWT pour un administrateur :
+```bash
+curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"pseudo": "admybad", "password": "admybad"}'
+```
+
+#### **Réponse attendue** :
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+---
+
+### **2. Terrains**
+
+#### **Lister tous les terrains**
+```bash
+curl -X GET http://localhost:3000/terrains
+```
+
+#### **Mettre à jour la disponibilité d’un terrain**
+Remplacez `<TOKEN>` par le token JWT obtenu lors de l’authentification.
+```bash
+curl -X POST http://localhost:3000/terrains/A/status -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d '{"available": false}'
+```
+
+#### **Réponse attendue** :
+```json
+{
+  "id": "A",
+  "available": false,
+  "_links": {
+    "self": { "href": "/terrains/A" }
+  }
+}
+```
+
+---
+
+### **3. Réservations**
+
+#### **Lister toutes les réservations**
+```bash
+curl -X GET http://localhost:3000/reservations
+```
+
+#### **Créer une réservation**
+```bash
+curl -X POST http://localhost:3000/reservations -H "Content-Type: application/json" -d '{
+  "terrainId": "A",
+  "pseudo": "player1",
+  "startTime": "2024-12-04T10:00:00Z",
+  "endTime": "2024-12-04T10:45:00Z"
+}'
+```
+
+#### **Supprimer une réservation**
+Remplacez `<TOKEN>` par le token JWT.
+```bash
+curl -X DELETE http://localhost:3000/reservations/1 -H "Authorization: Bearer <TOKEN>"
+```
 
 ---
 
